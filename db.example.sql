@@ -77,7 +77,7 @@ CREATE TABLE `users` (
 
 --
 -- Insert values for table `users`
---
+-
 
 LOCK TABLES `users` WRITE;
 
