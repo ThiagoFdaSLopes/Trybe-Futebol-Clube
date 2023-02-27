@@ -40,4 +40,11 @@ describe('Seu teste', () => {
     expect(chaiHttpResponse.status).to.be.deep.equal(200);
   });
 
+  it('Testando o metodo get da rota teams por id', async () => {
+    chaiHttpResponse = await chai
+       .request(app).get('/teams/5');
+
+    expect(chaiHttpResponse.status).to.be.deep.equal(200);
+  });
+
 });
