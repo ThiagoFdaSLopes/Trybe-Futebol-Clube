@@ -4,7 +4,6 @@ import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 
 import { app } from '../app';
-import User from  '../database/models/User'
 
 import { Response } from 'superagent';
 
@@ -12,7 +11,7 @@ chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('Seu teste', () => {
+describe('Teste User', () => {
   /**
    * Exemplo do uso de stubs com tipos
    */
@@ -25,9 +24,9 @@ describe('Seu teste', () => {
   //     .resolves({} as User);
   // });
 
-  // afterEach(()=>{
-  //   (User.findOne as sinon.SinonStub).restore();
-  // })
+  afterEach(()=>{
+    sinon.restore();
+  })
 
   it('Testando o metodo post rota login email vazio', async () => {
     chaiHttpResponse = await chai
