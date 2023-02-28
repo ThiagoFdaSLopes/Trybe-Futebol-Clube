@@ -35,4 +35,18 @@ describe('Teste Matches', () => {
     expect(chaiHttpResponse.status).to.be.deep.equal(200);
   });
 
+  it('Testando o metodo get rota matches inProgress === true', async () => {
+    chaiHttpResponse = await chai
+       .request(app).get('/matches?inProgress=true');
+
+    expect(chaiHttpResponse.status).to.be.deep.equal(200);
+  });
+
+  it('Testando o metodo get rota matches inProgress === false', async () => {
+    chaiHttpResponse = await chai
+       .request(app).get('/matches?inProgress=false');
+
+    expect(chaiHttpResponse.status).to.be.deep.equal(200);
+  });
+
 });
