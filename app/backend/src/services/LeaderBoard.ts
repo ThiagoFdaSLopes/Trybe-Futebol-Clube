@@ -7,12 +7,13 @@ export default class LeaderBoardService {
   protected model: ModelStatic<Matche> = Matche;
   static modelTeam: ModelStatic<Team> = Team;
 
-  public async GetResults(): Promise<any> {
+  public async GetResults(): Promise<Results[]> {
     const matches = await this.model.findAll(
       { where: { inProgress: false } },
     );
-    const teste = LeaderBoardService.createObj(await LeaderBoardService.GetAllTeams(), matches);
-    return teste;
+    const resultsHome = LeaderBoardService
+      .createObj(await LeaderBoardService.GetAllTeams(), matches);
+    return resultsHome;
   }
 
   static async GetAllTeams(): Promise<Team[]> {
