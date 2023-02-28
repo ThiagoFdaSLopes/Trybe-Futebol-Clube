@@ -6,6 +6,12 @@ const matcheController = new MatcheController();
 
 const matcheRouter = Router();
 
+matcheRouter.post(
+  '/',
+  validateToken,
+
+  (req: Request, res: Response) => matcheController.CreateMatche(req, res),
+);
 matcheRouter.get('/', (req: Request, res: Response) => matcheController.getAllMatches(req, res));
 matcheRouter.patch(
   '/:id',
