@@ -27,23 +27,13 @@ export default class MatcheService {
   }
 
   async finishMatche(id: number): Promise<number[] | undefined> {
-    try {
-      const result = await this.model.update({ inProgress: false }, { where: { id } });
-      return result;
-    } catch (err) {
-      const error = err as Error;
-      throw new Error(error.message);
-    }
+    const result = await this.model.update({ inProgress: false }, { where: { id } });
+    return result;
   }
 
   async EditMatche(id: number, body: BodyEditMactche): Promise<number[] | undefined> {
-    try {
-      const result = await this.model.update({ homeTeamGoals: body.homeTeamGoals,
-        awayTeamGoals: body.awayTeamGoals }, { where: { id } });
-      return result;
-    } catch (err) {
-      const error = err as Error;
-      throw new Error(error.message);
-    }
+    const result = await this.model.update({ homeTeamGoals: body.homeTeamGoals,
+      awayTeamGoals: body.awayTeamGoals }, { where: { id } });
+    return result;
   }
 }

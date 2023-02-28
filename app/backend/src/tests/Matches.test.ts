@@ -49,4 +49,35 @@ describe('Teste Matches', () => {
     expect(chaiHttpResponse.status).to.be.deep.equal(200);
   });
 
+  it('Testando o metodo patch rota matches para finalizar matche', async () => {
+    chaiHttpResponse = await chai
+       .request(app).patch('/matches/12/finish').set('authorization', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsInBhc3N3b3JkIjoiJDJhJDA4JHhpLkh4azFjekFPMG5aUi4uQjM5M3UxMGFFRDBSUTFOM1BBRVhRN0h4dExqS1BFWkJ1LlBXIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE2Nzc1OTA1NDF9.QXwSdQYZKCYzLWS7njCAU4Xf46KhRsm3hbCVVVsyNqI');
+
+    expect(chaiHttpResponse.status).to.be.deep.equal(200);
+  });
+
+  it('Testando o metodo patch rota matches para finalizar matche token invalido', async () => {
+    chaiHttpResponse = await chai
+       .request(app).patch('/matches/12/finish')
+        .set('authorization', 'ebGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsInBhc3N3b3JkIjoiJDJhJDA4JHhpLkh4azFjekFPMG5aUi4uQjM5M3UxMGFFRDBSUTFOM1BBRVhRN0h4dExqS1BFWkJ1LlBXIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE2Nzc1OTA1NDF9.QXwSdQYZKCYzLWS7njCAU4Xf46KhRsm3hbCVVVsyNqI')
+        .send({
+          "homeTeamGoals": 3,
+          "awayTeamGoals": 1
+        });
+
+    expect(chaiHttpResponse.status).to.be.deep.equal(401);
+  });
+
+  it('Testando o metodo patch rota matches para editar matche', async () => {
+    chaiHttpResponse = await chai
+       .request(app).patch('/matches/12')
+        .set('authorization', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsInBhc3N3b3JkIjoiJDJhJDA4JHhpLkh4azFjekFPMG5aUi4uQjM5M3UxMGFFRDBSUTFOM1BBRVhRN0h4dExqS1BFWkJ1LlBXIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE2Nzc1OTA1NDF9.QXwSdQYZKCYzLWS7njCAU4Xf46KhRsm3hbCVVVsyNqI')
+        .send({
+          "homeTeamGoals": 3,
+          "awayTeamGoals": 1
+        });
+
+    expect(chaiHttpResponse.status).to.be.deep.equal(200);
+  });
+
 });
