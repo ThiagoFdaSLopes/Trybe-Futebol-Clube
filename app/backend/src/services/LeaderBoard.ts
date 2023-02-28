@@ -126,4 +126,30 @@ export default class LeaderBoardService {
       return b.goalsFavor - a.goalsFavor;
     });
   }
+
+  static GetLeaderBoard(home: Results[], away: Results[]): Results[] {
+    const arrLeaders: Results[] = home.map((homeArr) => {
+      const awayAndHome = away.find((el) => el.name === homeArr.name);
+      return { name: homeArr.name,
+        totalPoints: homeArr.totalPoints + (awayAndHome?.totalPoints ?? 0),
+        totalGames: homeArr.totalGames + (awayAndHome?.totalGames ?? 0),
+        totalVictories: homeArr.totalVictories + (awayAndHome?.totalVictories ?? 0),
+        totalDraws: homeArr.totalDraws + (awayAndHome?.totalDraws ?? 0),
+        totalLosses: homeArr.totalLosses + (awayAndHome?.totalLosses ?? 0),
+        goalsFavor: homeArr.goalsFavor + (awayAndHome?.goalsFavor ?? 0),
+        goalsOwn: homeArr.goalsOwn + (awayAndHome?.goalsOwn ?? 0),
+        goalsBalance: homeArr.goalsBalance + (awayAndHome?.goalsBalance ?? 0),
+        efficiency: LeaderBoardService.getEfi(
+          homeArr.totalPoints + (awayAndHome?.totalPoints ?? 0),
+          homeArr.totalGames + (awayAndHome?.totalGames ?? 0),
+        ),
+      };
+    });
+    return LeaderBoardService.sortTeams(arrLeaders);
+  }
+
+  static getEfi(pontosTotais: number, jogosTotais: number): number {
+    const resultado = Number(((pontosTotais / (jogosTotais * 3)) * 100).toFixed(2));
+    return resultado;
+  }
 }
