@@ -1,4 +1,6 @@
 import { ModelStatic, Op } from 'sequelize';
+import Invalid from '../utils/classError';
+import { BodyCreateMatche } from '../interfaces/BodyCreateMatche';
 import { BodyEditMactche } from '../interfaces/BodyEditMatche';
 import Team from '../database/models/Team';
 import Matche from '../database/models/Matche';
@@ -35,5 +37,22 @@ export default class MatcheService {
     const result = await this.model.update({ homeTeamGoals: body.homeTeamGoals,
       awayTeamGoals: body.awayTeamGoals }, { where: { id } });
     return result;
+  }
+
+  async CreateMatche(
+    { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals }: BodyCreateMatche,
+  ): Promise<Matche> {
+    try {
+      if (homeTeamId === awayTeamId) {
+        throw new Invalid('It is not possible to create a match with two equal teams', 422);
+      }
+      const result = await this.model.create(
+        { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals, inProgress: true },
+      );
+      return result;
+    } catch (err) {
+      const error = err as Error;
+      throw new Error(error.message);
+    }
   }
 }
