@@ -15,4 +15,9 @@ leaderBoardRouter.get(
   (req: Request, res: Response) => leaderBoardController.GetResultsAway(req, res),
 );
 
+leaderBoardRouter.get(
+  '/',
+  (req: Request, res: Response) => leaderBoardController.GetResults(req, res),
+);
+
 export default leaderBoardRouter;
