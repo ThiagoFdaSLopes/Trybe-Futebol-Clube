@@ -7,12 +7,12 @@ export default class LeaderBoardService {
   protected model: ModelStatic<Matche> = Matche;
   static modelTeam: ModelStatic<Team> = Team;
 
-  public async GetResults(): Promise<Results[]> {
+  public async GetResults(teamSide: string): Promise<Results[]> {
     const matches = await this.model.findAll(
       { where: { inProgress: false } },
     );
     const resultsHome = LeaderBoardService
-      .createObj(await LeaderBoardService.GetAllTeams(), matches);
+      .createObj(await LeaderBoardService.GetAllTeams(), matches, teamSide);
     return resultsHome;
   }
 
@@ -21,79 +21,94 @@ export default class LeaderBoardService {
     return resultTeams;
   }
 
-  static createObj(teams: Team[], matches: Matche[]) {
+  static createObj(teams: Team[], matches: Matche[], teamSide: string) {
     const arrayTeams = teams.map((team) => ({
       name: team.dataValues.teamName as string,
-      totalPoints: LeaderBoardService.totalPoints(matches, team.id),
-      totalGames: LeaderBoardService.getTotalGames(matches, team.id),
-      totalVictories: LeaderBoardService.getMatchesTeamsVictories(matches, team.id),
-      totalDraws: LeaderBoardService.getMatchesTeamsDraws(matches, team.id),
-      totalLosses: LeaderBoardService.getMatchesTeamsLosses(matches, team.id),
-      goalsFavor: LeaderBoardService.getTotalGoalsFavor(matches, team.id),
-      goalsOwn: LeaderBoardService.getTotalGoalsOwn(matches, team.id),
-      goalsBalance: LeaderBoardService.goalsBalance(matches, team.id),
-      efficiency: LeaderBoardService.getEfficiency(matches, team.id),
+      totalPoints: LeaderBoardService.totalPoints(matches, team.id, teamSide),
+      totalGames: LeaderBoardService.getTotalGames(matches, team.id, teamSide),
+      totalVictories: LeaderBoardService.getMatchesTeamsVictories(matches, team.id, teamSide),
+      totalDraws: LeaderBoardService.getMatchesTeamsDraws(matches, team.id, teamSide),
+      totalLosses: LeaderBoardService.getMatchesTeamsLosses(matches, team.id, teamSide),
+      goalsFavor: LeaderBoardService.getTotalGoals(matches, team.id, teamSide),
+      goalsOwn: LeaderBoardService.getTotalGoalsOwn(matches, team.id, teamSide),
+      goalsBalance: LeaderBoardService.calculateDiferenceGoals(
+        LeaderBoardService.getTotalGoals(matches, team.id, teamSide),
+        LeaderBoardService.getTotalGoalsOwn(matches, team.id, teamSide),
+      ),
+      efficiency: LeaderBoardService.getEfficiency(matches, team.id, teamSide),
     }));
     const sorted = LeaderBoardService.sortTeams(arrayTeams);
     return sorted;
   }
 
-  static getMatchesTeamsVictories(matches: Matche[], teamId: number): number {
-    return matches.filter(
-      (match) => match.homeTeamId === teamId,
-    ).filter((team) => team.homeTeamGoals > team.awayTeamGoals).length;
+  static calculateDiferenceGoals(goalsFavor: number, goalsOwn: number): number {
+    return goalsFavor - goalsOwn;
   }
 
-  static getMatchesTeamsDraws(matches: Matche[], teamId: number): number {
+  static getMatchesTeamsVictories(matches: Matche[], teamId: number, teamSide: string): number {
+    const side = `${teamSide}TeamId` as 'homeTeamId' | 'awayTeamId';
+    const goalsTeam = `${teamSide}TeamGoals` as 'homeTeamGoals' | 'awayTeamGoals';
     return matches.filter(
-      (match) => match.homeTeamId === teamId,
-    ).filter((team) => team.homeTeamGoals === team.awayTeamGoals).length;
+      (match) => match[side] === teamId,
+    ).filter((team) => team[goalsTeam]
+    > team[`${teamSide === 'home' ? 'away' : 'home'}TeamGoals`]).length;
   }
 
-  static getMatchesTeamsLosses(matches: Matche[], teamId: number): number {
+  static getMatchesTeamsDraws(matches: Matche[], teamId: number, teamSide: string): number {
+    const side = `${teamSide}TeamId` as 'homeTeamId' | 'awayTeamId';
+    const goalsTeam = `${teamSide}TeamGoals` as 'homeTeamGoals' | 'awayTeamGoals';
     return matches.filter(
-      (match) => match.homeTeamId === teamId,
-    ).filter((team) => team.homeTeamGoals < team.awayTeamGoals).length;
+      (match) => match[side] === teamId,
+    ).filter((team) => team[goalsTeam]
+    === team[`${teamSide === 'home' ? 'away' : 'home'}TeamGoals`]).length;
   }
 
-  static getTotalGoalsFavor(matches: Matche[], teamId: number): number {
+  static getMatchesTeamsLosses(matches: Matche[], teamId: number, teamSide: string): number {
+    const side = `${teamSide}TeamId` as 'homeTeamId' | 'awayTeamId';
+    const goalsTeam = `${teamSide}TeamGoals` as 'homeTeamGoals' | 'awayTeamGoals';
+    return matches.filter(
+      (match) => match[side] === teamId,
+    ).filter((team) => team[goalsTeam]
+    < team[`${teamSide === 'home' ? 'away' : 'home'}TeamGoals`]).length;
+  }
+
+  static getTotalGoals(matches: Matche[], teamId: number, teamSide: string): number {
+    const side = `${teamSide}TeamId` as 'homeTeamId' | 'awayTeamId';
+    const goalsTeam = `${teamSide}TeamGoals` as 'homeTeamGoals' | 'awayTeamGoals';
     return matches.reduce((acc, curr) => {
       let goals = acc;
-      if (curr.homeTeamId === teamId) {
-        goals += curr.homeTeamGoals;
+      if (curr[side] === teamId) {
+        goals += curr[goalsTeam];
       }
       return goals;
     }, 0);
   }
 
-  static getTotalGoalsOwn(matches: Matche[], teamId: number): number {
+  static getTotalGoalsOwn(matches: Matche[], teamId: number, teamSide: string): number {
+    const side = `${teamSide}TeamId` as 'homeTeamId' | 'awayTeamId';
     return matches.reduce((acc, curr) => {
       let goals = acc;
-      if (curr.homeTeamId === teamId) {
-        goals += curr.awayTeamGoals;
+      if (curr[side] === teamId) {
+        goals += curr[`${teamSide === 'home' ? 'away' : 'home'}TeamGoals`];
       }
       return goals;
     }, 0);
   }
 
-  static getTotalGames(matches: Matche[], teamId: number): number {
-    return matches.filter((match) => match.homeTeamId === teamId).length;
+  static getTotalGames(matches: Matche[], teamId: number, teamSide: string): number {
+    const side = `${teamSide}TeamId` as 'homeTeamId' | 'awayTeamId';
+    return matches.filter((match) => match[side] === teamId).length;
   }
 
-  static totalPoints(matches: Matche[], teamId: number): number {
+  static totalPoints(matches: Matche[], teamId: number, teamSide: string): number {
     return (
-      LeaderBoardService.getMatchesTeamsVictories(matches, teamId) * 3)
-      + (LeaderBoardService.getMatchesTeamsDraws(matches, teamId) * 1);
+      LeaderBoardService.getMatchesTeamsVictories(matches, teamId, teamSide) * 3)
+      + (LeaderBoardService.getMatchesTeamsDraws(matches, teamId, teamSide) * 1);
   }
 
-  static goalsBalance(matches: Matche[], teamId: number): number {
-    return LeaderBoardService.getTotalGoalsFavor(matches, teamId)
-    - LeaderBoardService.getTotalGoalsOwn(matches, teamId);
-  }
-
-  static getEfficiency(matches: Matche[], teamId: number): number {
-    const pontos = LeaderBoardService.totalPoints(matches, teamId);
-    const jogos = LeaderBoardService.getTotalGames(matches, teamId);
+  static getEfficiency(matches: Matche[], teamId: number, teamSide: string): number {
+    const pontos = LeaderBoardService.totalPoints(matches, teamId, teamSide);
+    const jogos = LeaderBoardService.getTotalGames(matches, teamId, teamSide);
 
     const resultado = Number(((pontos / (jogos * 3)) * 100).toFixed(2));
 
