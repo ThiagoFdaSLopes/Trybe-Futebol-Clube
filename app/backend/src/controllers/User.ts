@@ -11,7 +11,7 @@ export default class UserController {
     try {
       const result = await this.userService.UserLogin(req.body);
       if (result === null) return res.status(401).json({ message: errorMessage });
-      const token = createToken(req.body);
+      const token = createToken(result);
       res.status(200).json({ token });
     } catch (error) {
       const err = error as Error;
