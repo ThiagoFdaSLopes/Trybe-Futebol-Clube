@@ -13,24 +13,24 @@ chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('Seu teste', () => {
+describe('Teste Teams', () => {
   /**
    * Exemplo do uso de stubs com tipos
    */
 
   let chaiHttpResponse: Response;
 
-  beforeEach(async () => {
-    sinon
-      .stub(Team, "findOne")
-      .resolves({
-        id: 10,
-        teamName: "SPFC"
-      } as Team);
-  });
+  // beforeEach(async () => {
+  //   sinon
+  //     .stub(Team, "findOne")
+  //     .resolves({
+  //       id: 10,
+  //       teamName: "SPFC"
+  //     } as Team);
+  // });
 
   afterEach(()=>{
-    (Team.findOne as sinon.SinonStub).restore();
+    sinon.restore();
   })
 
   it('Testando o metodo get da rota teams', async () => {
