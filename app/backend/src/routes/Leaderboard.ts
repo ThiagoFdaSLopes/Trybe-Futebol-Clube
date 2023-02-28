@@ -7,7 +7,12 @@ const leaderBoardRouter = Router();
 
 leaderBoardRouter.get(
   '/home',
-  (req: Request, res: Response) => leaderBoardController.GetResults(req, res),
+  (req: Request, res: Response) => leaderBoardController.GetResultsHome(req, res),
+);
+
+leaderBoardRouter.get(
+  '/away',
+  (req: Request, res: Response) => leaderBoardController.GetResultsAway(req, res),
 );
 
 export default leaderBoardRouter;
