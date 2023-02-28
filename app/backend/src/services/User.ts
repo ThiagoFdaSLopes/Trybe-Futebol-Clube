@@ -15,7 +15,7 @@ export default class UserService {
       );
       const validateUser = bcrypt.compareSync(user.password, result?.password || '-');
 
-      return validateUser ? result : null;
+      return validateUser ? result?.dataValues : null;
     } catch (error) {
       const err = error as Error;
       throw new Error(`${err.message}`);
