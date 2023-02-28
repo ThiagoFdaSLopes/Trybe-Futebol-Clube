@@ -29,6 +29,16 @@ describe('Seu teste', () => {
   //   (User.findOne as sinon.SinonStub).restore();
   // })
 
+  it('Testando o metodo post rota login email vazio', async () => {
+    chaiHttpResponse = await chai
+       .request(app).post('/login').send({
+        "email": "",
+        "password": "stringTeste"
+      });
+
+    expect(chaiHttpResponse.status).to.be.deep.equal(400);
+  });
+
   it('Testando o metodo post rota login usuario invalido', async () => {
     chaiHttpResponse = await chai
        .request(app).post('/login').send({
@@ -46,7 +56,7 @@ describe('Seu teste', () => {
         "password": "stringTeste"
       });
 
-    expect(chaiHttpResponse.status).to.be.deep.equal(400);
+    expect(chaiHttpResponse.status).to.be.deep.equal(401);
   });
 
   it('Testando o metodo post rota login password invalido', async () => {
@@ -56,7 +66,17 @@ describe('Seu teste', () => {
         "password": "str"
       });
 
-    expect(chaiHttpResponse.status).to.be.deep.equal(400);
+    expect(chaiHttpResponse.status).to.be.deep.equal(401);
+  });
+
+  it('Testando o metodo post rota login user valido', async () => {
+    chaiHttpResponse = await chai
+       .request(app).post('/login').send({
+        "email": "admin@admin.com",
+        "password": "secret_admin"
+      });
+
+    expect(chaiHttpResponse.status).to.be.deep.equal(200);
   });
 
 });
