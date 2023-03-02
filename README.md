@@ -63,9 +63,9 @@ Foram encontradas 2 possíveis soluções para este problema:
 * Você pode adicionar manualmente nos arquivos .bashrc, .zshenv ou .zshrc do seu computador a linha export DOCKER_DEFAULT_PLATFORM=linux/amd64, essa é uma solução global. As soluções foram com base nesta fonte.
 
 ## Stacks utilizada
-Front-End: React, Axios.
-Back-end: Javascript, Typescript, Node.js, POO, SOLID, Docker, Sequelize,
-Testes: Mocha, chai, sinon, jest.
+- Front-End: React, Axios.
+- Back-end: Javascript, Typescript, Node.js, POO, SOLID, Docker, Sequelize,
+- Testes: Mocha, chai, sinon, jest.
 
 ### Em Construção
 
